@@ -314,7 +314,7 @@
     $('prevDay').disabled = idx <= 0; $('nextDay').disabled = idx >= allDates.length - 1;
     var c = $('content'); c.textContent = '';
 
-    gs.forEach(function (g) {
+    gs.forEach(function (g, gi) {
       var blk = el('section', 'game-block');
       var mh = el('div', 'matchup');
       mh.appendChild(el('span', 'gno', g.post ? 'Postseason' : (g.n ? 'Game ' + g.n + ' of ' + g.year : g.year)));
@@ -323,12 +323,13 @@
       mh.appendChild(el('span', 'badge ' + (won ? 'w' : 'l'), (won ? 'W ' : 'L ') + g.rs + '–' + g.ra));
       blk.appendChild(mh);
       g.haiku.forEach(function (h) { blk.appendChild(haikuCard(h, { date: date, multi: g.haiku.length > 1 })); });
+      // off-field haiku sit with the other haiku, above the game details (after the last game on doubleheaders)
+      if (gi === gs.length - 1) offs.forEach(function (o) { blk.appendChild(haikuCard(o, { off: true, date: date })); });
       blk.appendChild(summaryCard(g));
       c.appendChild(blk);
     });
-    if (offs.length) {
+    if (offs.length && !gs.length) {
       var blk2 = el('section', 'game-block');
-      if (gs.length) { var m2 = el('div', 'matchup'); m2.appendChild(el('span', 'gno', 'Also that day')); blk2.appendChild(m2); }
       offs.forEach(function (o) { blk2.appendChild(haikuCard(o, { off: true, date: date })); });
       c.appendChild(blk2);
     }
