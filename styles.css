@@ -178,3 +178,14 @@ a.brand{color:inherit;text-decoration:none}
 .story p{margin:0;font-size:18px}.story .src{color:var(--muted);font-size:15px}
 .back{font-size:16px!important}
 @media (max-width:860px){.site-nav{margin-left:0;width:100%;justify-content:flex-start}}
+
+/* photos attached to a tweet */
+.photos{display:grid;gap:6px;margin:14px 0 4px}
+.photos.n1{grid-template-columns:1fr}
+.photos.n2,.photos.n3,.photos.n4{grid-template-columns:1fr 1fr}
+.photos.n3 a:first-child{grid-column:1/-1}
+.photos a{display:block;border-radius:6px;overflow:hidden;background:var(--line)}
+.photos img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover}
+.photos.n1 img{object-fit:contain;max-height:560px;margin:0 auto;background:var(--line)}
+.media-note{margin:12px 0 0;font-size:13px}
+.media-note a{color:var(--link);font-weight:600}

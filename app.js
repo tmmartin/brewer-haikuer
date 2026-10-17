@@ -154,6 +154,25 @@
     var p = el('p', 'lines');
     h.lines.forEach(function (ln) { p.appendChild(ln === '' ? el('span', 'gap') : el('span', null, ln)); });
     a.appendChild(p);
+    var m = h.media;
+    if (m) {
+      if (m.photos && m.photos.length) {
+        var fig = el('div', 'photos n' + Math.min(m.photos.length, 4));
+        m.photos.forEach(function (ph, i) {
+          var pa = el('a'); pa.href = ph.src; pa.target = '_blank'; pa.rel = 'noopener';
+          var im = el('img'); im.src = ph.src; im.width = ph.w; im.height = ph.h; im.loading = 'lazy';
+          im.alt = 'Photo attached to the tweet' + (m.photos.length > 1 ? ' (' + (i + 1) + ' of ' + m.photos.length + ')' : '');
+          pa.appendChild(im); fig.appendChild(pa);
+        });
+        a.appendChild(fig);
+      }
+      if (m.extra) {
+        var note = el('p', 'media-note');
+        var ml = el('a', null, (m.extra === 'gif' ? 'This tweet included an animated GIF' : 'This tweet included a video') + ' — watch on Twitter ↗');
+        ml.href = 'https://x.com/brewer_haikuer/status/' + h.id; ml.target = '_blank'; ml.rel = 'noopener';
+        note.appendChild(ml); a.appendChild(note);
+      }
+    }
     var f = el('div', 'haiku-foot');
     var t = new Date(h.ts);
     f.appendChild(el('span', null, 'Tweeted ' + t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })));
