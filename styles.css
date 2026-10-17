@@ -53,7 +53,7 @@ h1{font:600 clamp(28px,5vw,44px)/1 var(--display);margin:0;letter-spacing:-.01em
 
 /* buttons */
 .btn{font:600 16px/1 var(--label);letter-spacing:.06em;text-transform:uppercase;border:0;border-radius:6px;padding:12px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;justify-content:center}
-.btn-random{width:100%;background:var(--gold);color:var(--navy);font-size:20px;padding:16px;box-shadow:0 3px 0 var(--gold-deep)}
+.btn-random{background:var(--gold);color:var(--navy);font-size:16px;padding:12px 10px;box-shadow:0 3px 0 var(--gold-deep)}
 .btn-random:hover{transform:translateY(1px);box-shadow:0 2px 0 var(--gold-deep)}
 .btn-random:active{transform:translateY(3px);box-shadow:none}
 .btn-ghost{background:transparent;color:var(--ui);border:2px solid var(--ui);padding:9px 12px}
@@ -89,8 +89,6 @@ h1{font:600 clamp(28px,5vw,44px)/1 var(--display);margin:0;letter-spacing:-.01em
 /* stage */
 .stage{min-width:0}
 .stage:focus{outline:none}
-.stage-nav{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
-.stage-nav h2{font:600 clamp(20px,3.2vw,28px)/1.15 var(--display);margin:0;text-align:center;flex:1}
 .game-block{margin-bottom:34px}
 .matchup{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
 .matchup .gno{font:700 14px var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -143,14 +141,21 @@ details.plays li em{display:block;font:700 12px var(--label);letter-spacing:.12e
 .foot{background:var(--navy);color:#cdd6ea;padding:26px 0;font-size:14px;border-top:6px solid var(--gold)}
 .foot p{margin:0 0 8px}.foot .fine{font-size:12px;color:#93a3c7}
 .foot a{color:var(--gold)}
-@media (max-width:520px){.haiku{padding:20px 18px 10px}.stage-nav .btn{padding:9px 10px;font-size:14px}.masthead-stats{width:100%;justify-content:space-between}}
+@media (max-width:520px){.haiku{padding:20px 18px 10px}.pick-btns .btn{padding:9px 8px;font-size:13.5px}.masthead-stats{width:100%;justify-content:space-between}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* phone: Random on top, then the haiku, then the calendar */
+/* navigation cluster (left column) */
+.pick-nav{display:grid;gap:12px}
+.picker h2.date-title{font:600 clamp(20px,2.4vw,26px)/1.15 var(--display);letter-spacing:0;text-transform:none;color:var(--ink);margin:6px 0 0;text-align:center}
+.pick-btns{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:stretch}
+.pick-btns .btn{white-space:nowrap;font-size:13px;letter-spacing:.02em;padding:11px 7px;gap:5px;min-width:0}
+@media (max-width:400px){.pick-btns .btn svg{display:none}}
+.pick-btns .btn svg{width:16px;height:16px}
+/* phone: date + buttons on top, then the haiku, then calendar and chips */
 @media (max-width:860px){
   .layout{display:flex;flex-direction:column;gap:18px}
   .picker{display:contents}
-  .btn-random{order:1}
+  .pick-nav{order:1}
   .stage{order:2}
   .cal{order:3}
   .seasons{order:4}

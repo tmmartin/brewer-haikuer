@@ -292,8 +292,7 @@
       // links
       var links = el('div', 'sum-links');
       var a1 = el('a', null, 'MLB Gameday ↗'); a1.href = 'https://www.mlb.com/gameday/' + game.gamePk; links.appendChild(a1);
-      var a2 = el('a', null, 'ESPN scoreboard ↗'); a2.href = 'https://www.espn.com/mlb/scoreboard/_/date/' + g.date.replace(/-/g, ''); links.appendChild(a2);
-      [a1, a2].forEach(function (a) { a.target = '_blank'; a.rel = 'noopener'; });
+      a1.target = '_blank'; a1.rel = 'noopener';
       body.appendChild(links);
     }).catch(function () {
       body.textContent = '';
@@ -302,9 +301,6 @@
       body.appendChild(p);
       body.appendChild(el('p', 'note', 'Full game details couldn’t be loaded from MLB right now.'));
       venue.textContent = '';
-      var links = el('div', 'sum-links');
-      var a2 = el('a', null, 'ESPN scoreboard ↗'); a2.href = 'https://www.espn.com/mlb/scoreboard/_/date/' + g.date.replace(/-/g, ''); a2.target = '_blank'; a2.rel = 'noopener';
-      links.appendChild(a2); body.appendChild(links);
     });
     return box;
   }
