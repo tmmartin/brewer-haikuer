@@ -8,4 +8,4 @@ Static archive of @brewer_haikuer's Milwaukee Brewers game-recap haiku (2009–2
 
 Run locally: `python3 -m http.server`, then open http://localhost:8000
 
-Before launch: remove the `noindex` meta tag in `index.html`.
+Launched: the `noindex` tag has been removed.
