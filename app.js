@@ -144,10 +144,12 @@
   var PHASE = { pre: 'Pre-game', mid: 'Mid-game', final: 'Final' };
   function haikuCard(h, opts) {
     var a = el('article', 'haiku'); a.dataset.id = h.id;
-    var meta = el('div', 'haiku-meta');
-    var label = opts.off ? 'Off the field' : (PHASE[h.phase] || 'Haiku');
-    meta.appendChild(el('span', 'phase', label));
-    if (!opts.off && h.phase === 'mid' && /^(in|after)\s/.test(h.tail || '')) meta.appendChild(el('span', null, h.tail));
+    var meta = el('div', 'haiku-head');
+    meta.appendChild(el('h3', null, 'The haiku'));
+    // phase label only where it tells haiku apart: off-field posts, or several haiku on one day
+    var label = opts.off ? 'Off the field' : (opts.multi ? (PHASE[h.phase] || '') : '');
+    if (label && !opts.off && opts.multi && h.phase === 'mid' && /^(in|after)\s/.test(h.tail || '')) label += ' · ' + h.tail;
+    if (label) meta.appendChild(el('span', 'phase', label));
     a.appendChild(meta);
     var p = el('p', 'lines');
     h.lines.forEach(function (ln) { p.appendChild(ln === '' ? el('span', 'gap') : el('span', null, ln)); });
@@ -158,14 +160,6 @@
     var link = el('a', null, 'View original on Twitter ↗');
     link.href = 'https://x.com/brewer_haikuer/status/' + h.id; link.rel = 'noopener'; link.target = '_blank';
     f.appendChild(link);
-    var cp = el('button', 'linkbtn', 'Copy link'); cp.type = 'button';
-    cp.addEventListener('click', function () {
-      var url = location.href.split('#')[0] + '#/' + (opts.date) + '/' + h.id;
-      var done = function () { cp.textContent = 'Copied!'; setTimeout(function () { cp.textContent = 'Copy link'; }, 1400); };
-      try { navigator.clipboard.writeText(url).then(done, function () { window.prompt('Copy this link', url); }); }
-      catch (e) { window.prompt('Copy this link', url); }
-    });
-    f.appendChild(cp);
     var tags = (h.tags || []).filter(function (x) { return x[0] === '#'; }).slice(0, 4);
     if (tags.length) f.appendChild(el('span', 'tags', tags.join(' ')));
     a.appendChild(f);
@@ -224,7 +218,7 @@
       var meHome = home.team.id === MIL_ID;
       var me = meHome ? home : away, op = meHome ? away : home;
       var gd = feed.gameData || {}, ld = feed.liveData || {};
-      venue.textContent = (gd.venue && gd.venue.name) || (game.venue && game.venue.name) || '';
+      venue.textContent = '';
 
       // narrative
       var dec = ld.decisions || {};
@@ -272,6 +266,7 @@
       // facts
       var facts = el('div', 'facts');
       function fact(k, v) { if (!v) return; var s = el('span'); s.appendChild(el('b', null, k)); s.appendChild(document.createTextNode(v)); facts.appendChild(s); }
+      fact('Place', (gd.venue && gd.venue.name) || (game.venue && game.venue.name) || '');
       if (gd.weather && gd.weather.temp) fact('Weather', gd.weather.temp + '°F, ' + (gd.weather.condition || '').toLowerCase() + (gd.weather.wind ? ', wind ' + gd.weather.wind : ''));
       if (gd.gameInfo && gd.gameInfo.gameDurationMinutes) fact('Time', Math.floor(gd.gameInfo.gameDurationMinutes / 60) + ':' + String(gd.gameInfo.gameDurationMinutes % 60).padStart(2, '0'));
       var tops = ((ld.boxscore && ld.boxscore.topPerformers) || []).slice(0, 3).map(function (t) { return t.player.person.fullName; });
@@ -331,7 +326,7 @@
       var won = g.rs > g.ra;
       mh.appendChild(el('span', 'badge ' + (won ? 'w' : 'l'), (won ? 'W ' : 'L ') + g.rs + '–' + g.ra));
       blk.appendChild(mh);
-      g.haiku.forEach(function (h) { blk.appendChild(haikuCard(h, { date: date })); });
+      g.haiku.forEach(function (h) { blk.appendChild(haikuCard(h, { date: date, multi: g.haiku.length > 1 })); });
       blk.appendChild(summaryCard(g));
       c.appendChild(blk);
     });
