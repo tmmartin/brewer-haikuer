@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brewer Haikuer — Milwaukee Brewers in 17 syllables</title>
+<meta name="description" content="A searchable archive of Milwaukee Brewers game-recap haiku, 2009–2024, each paired with the story of the game.">
+<meta name="theme-color" content="#12284B">
+<meta name="robots" content="noindex, nofollow"><!-- remove at launch -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2312284B'/%3E%3Cpath d='M18 24h28M20 32h24M22 40h20' stroke='%23FFC52F' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to haiku</a>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div>
+        <h1>Brewer Haikuer</h1>
+        <p class="tagline">Milwaukee Brewers / in 17 syllables / it’s a long season…</p>
+      </div>
+    </div>
+    <div class="masthead-stats" id="stats" aria-live="polite"></div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside class="picker" aria-label="Find a haiku">
+    <button class="btn btn-random" id="random" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm0-7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM8 14a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg>
+      Random haiku
+    </button>
+
+    <section class="cal" aria-label="Calendar">
+      <div class="cal-head">
+        <button class="icon-btn" id="prevMonth" type="button" aria-label="Previous month">‹</button>
+        <select id="monthSel" aria-label="Month"></select>
+        <select id="yearSel" aria-label="Year"></select>
+        <button class="icon-btn" id="nextMonth" type="button" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid cal-dow" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+      <div class="cal-grid" id="calGrid" role="grid"></div>
+      <div class="cal-legend">
+        <span><i class="lg lg-game"></i> Game haiku</span>
+        <span><i class="lg lg-off"></i> Off-field only</span>
+      </div>
+    </section>
+
+    <section class="seasons" aria-label="Jump to season">
+      <h2>Seasons</h2>
+      <div id="seasonChips" class="chips"></div>
+    </section>
+
+    <section class="otd" id="otd" hidden>
+      <h2>On this day</h2>
+      <div id="otdList" class="chips"></div>
+    </section>
+  </aside>
+
+  <main id="main" class="stage" tabindex="-1">
+    <div class="stage-nav">
+      <button class="btn btn-ghost" id="prevDay" type="button">‹ Earlier</button>
+      <h2 id="dateTitle">Loading the archive…</h2>
+      <button class="btn btn-ghost" id="nextDay" type="button">Later ›</button>
+    </div>
+    <div id="content" aria-live="polite"></div>
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>An archive of <a href="https://x.com/brewer_haikuer" rel="noopener">@brewer_haikuer</a> game-recap haiku, 2009–2024. Dates and game details are matched to the MLB schedule; game summaries are assembled live from the MLB Stats API.</p>
+    <p class="fine">Unofficial fan project — not affiliated with or endorsed by MLB or the Milwaukee Brewers. Game data © MLB Advanced Media, L.P.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
