@@ -152,16 +152,16 @@ details.plays li em{display:block;font:700 12px var(--label);letter-spacing:.12e
 .pick-btns .btn{white-space:nowrap;font-size:13px;letter-spacing:.02em;padding:11px 7px;gap:5px;min-width:0}
 @media (max-width:400px){.pick-btns .btn svg{display:none}}
 .pick-btns .btn svg{width:16px;height:16px}
-/* phone: date + buttons on top, then the haiku, then calendar and chips */
+/* phone: all navigation (stats, calendar, date, buttons, chips) on top, then haiku and game details */
 @media (max-width:860px){
   .layout{display:flex;flex-direction:column;align-items:stretch;gap:18px}
   .picker{display:contents}
-  .pick-nav{order:1}
-  .stage{order:2}
-  .stats{order:3}
-  .cal{order:4}
-  .seasons{order:5}
-  .otd{order:6}
+  .stats{order:1}
+  .cal{order:2}
+  .pick-nav{order:3}
+  .seasons{order:4}
+  .otd{order:5}
+  .stage{order:6}
 }
 
 /* nav + about page */
