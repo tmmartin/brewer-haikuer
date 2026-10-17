@@ -154,7 +154,7 @@ details.plays li em{display:block;font:700 12px var(--label);letter-spacing:.12e
 .pick-btns .btn svg{width:16px;height:16px}
 /* phone: date + buttons on top, then the haiku, then calendar and chips */
 @media (max-width:860px){
-  .layout{display:flex;flex-direction:column;gap:18px}
+  .layout{display:flex;flex-direction:column;align-items:stretch;gap:18px}
   .picker{display:contents}
   .pick-nav{order:1}
   .stage{order:2}
