@@ -157,8 +157,8 @@ details.plays li em{display:block;font:700 12px var(--label);letter-spacing:.12e
   .layout{display:flex;flex-direction:column;align-items:stretch;gap:18px}
   .picker{display:contents}
   .stats{order:1}
-  .cal{order:2}
-  .pick-nav{order:3}
+  .pick-nav{order:2}
+  .cal{order:3}
   .seasons{order:4}
   .otd{order:5}
   .stage{order:6}
@@ -189,3 +189,10 @@ a.brand{color:inherit;text-decoration:none}
 .photos.n1 img{object-fit:contain;max-height:560px;margin:0 auto;background:var(--line)}
 .media-note{margin:12px 0 0;font-size:13px}
 .media-note a{color:var(--link);font-weight:600}
+
+/* day stepper: arrow buttons around a larger Random button */
+.pick-btns{grid-template-columns:52px minmax(0,1fr) 52px}
+.pick-btns .btn-ghost{font-size:26px;line-height:1;padding:6px 0}
+.pick-btns .btn-random{font-size:19px;letter-spacing:.06em;padding:13px 10px}
+.pick-btns .btn:disabled{opacity:.4;cursor:default}
+@media (max-width:520px){.pick-btns .btn-random{font-size:17px}.pick-btns .btn-ghost{font-size:24px}}
