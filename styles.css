@@ -156,3 +156,18 @@ details.plays li em{display:block;font:700 12px var(--label);letter-spacing:.12e
   .seasons{order:4}
   .otd{order:5}
 }
+
+/* nav + about page */
+a.brand{color:inherit;text-decoration:none}
+.site-nav{display:flex;gap:6px;font-family:var(--label);text-transform:uppercase;letter-spacing:.08em;font-size:16px;margin-left:auto}
+.site-nav a{color:#cdd6ea;text-decoration:none;padding:8px 12px;border-radius:6px}
+.site-nav a:hover{color:#fff}.site-nav a[aria-current="page"]{color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold);border-radius:0}
+.about{max-width:720px;padding-top:36px;padding-bottom:48px}
+.about h2{font:600 clamp(26px,4vw,36px)/1.1 var(--display);margin:0 0 18px}
+.about p{font-size:18px;line-height:1.65;margin:0 0 18px}
+.about a{color:var(--link)}
+.story{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:10px;padding:16px 20px;margin:28px 0;box-shadow:var(--shadow)}
+.story h3{font:700 14px/1 var(--label);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 8px}
+.story p{margin:0;font-size:18px}.story .src{color:var(--muted);font-size:15px}
+.back{font-size:16px!important}
+@media (max-width:860px){.site-nav{margin-left:0;width:100%}}
