@@ -155,7 +155,7 @@
     var f = el('div', 'haiku-foot');
     var t = new Date(h.ts);
     f.appendChild(el('span', null, 'Tweeted ' + t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })));
-    var link = el('a', null, 'View original on X ↗');
+    var link = el('a', null, 'View original on Twitter ↗');
     link.href = 'https://x.com/brewer_haikuer/status/' + h.id; link.rel = 'noopener'; link.target = '_blank';
     f.appendChild(link);
     var cp = el('button', 'linkbtn', 'Copy link'); cp.type = 'button';
