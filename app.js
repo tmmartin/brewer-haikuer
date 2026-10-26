@@ -9,7 +9,7 @@
     ATL:'Atlanta Braves',NYM:'New York Mets',PHI:'Philadelphia Phillies',MIA:'Miami Marlins',FLA:'Florida Marlins',WSH:'Washington Nationals',
     LAD:'Los Angeles Dodgers',SF:'San Francisco Giants',SD:'San Diego Padres',COL:'Colorado Rockies',AZ:'Arizona Diamondbacks',CWS:'Chicago White Sox',
     MIN:'Minnesota Twins',DET:'Detroit Tigers',KC:'Kansas City Royals',CLE:'Cleveland Guardians',NYY:'New York Yankees',BOS:'Boston Red Sox',
-    TOR:'Toronto Blue Jays',TB:'Tampa Bay Rays',BAL:'Baltimore Orioles',LAA:'Los Angeles Angels',OAK:'Oakland Athletics',SEA:'Seattle Mariners',TEX:'Texas Rangers'
+    TOR:'Toronto Blue Jays',TB:'Tampa Bay Rays',BAL:'Baltimore Orioles',LAA:'Los Angeles Angels',OAK:'Oakland Athletics',ATH:'Athletics',SEA:'Seattle Mariners',TEX:'Texas Rangers'
   };
   var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var MIL_ID = 158;
@@ -53,10 +53,28 @@
     for (var d in gamesByDate) gamesByDate[d].sort(function (a, b) { return a.key < b.key ? -1 : 1; });
   }
 
+  /* ---------- reader submissions (approved in the admin queue, served by the Worker) ---------- */
+  function mergeSubmitted(items) {
+    items.forEach(function (it) {
+      var h = { id: it.id, ts: it.ts, phase: '', tail: '', lines: it.lines, tags: [], likes: 0, source: 'submitted', by: it.name };
+      var gg = it.game, host = null;
+      if (gg) {
+        host = (DB.games.filter(function (g) { return g.date === it.date && g.opp === gg.opp; })[0]) || null;
+        if (!host) {
+          host = { key: it.date + '-' + (gg.pk || 's'), date: it.date, year: gg.year, n: gg.n, post: gg.post, opp: gg.opp, rs: gg.rs, ra: gg.ra, haiku: [] };
+          DB.games.push(host);
+        }
+        host.haiku.push(h);
+      } else {
+        DB.offfield.push({ id: h.id, ts: h.ts, date: it.date, lines: it.lines, tags: [], likes: 0, source: 'submitted', by: it.name });
+      }
+    });
+  }
+
   /* ---------- routing ---------- */
   function readHash() {
     var h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-    var m = /^(\d{4}-\d{2}-\d{2})(?:\/(\d+))?$/.exec(h);
+    var m = /^(\d{4}-\d{2}-\d{2})(?:\/(\w+))?$/.exec(h);
     if (m && (gamesByDate[m[1]] || offByDate[m[1]])) return { date: m[1], focus: m[2] || null };
     return null;
   }
@@ -175,10 +193,14 @@
     }
     var f = el('div', 'haiku-foot');
     var t = new Date(h.ts);
-    f.appendChild(el('span', null, 'Tweeted ' + t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })));
-    var link = el('a', null, 'View original on Twitter ↗');
-    link.href = 'https://x.com/brewer_haikuer/status/' + h.id; link.rel = 'noopener'; link.target = '_blank';
-    f.appendChild(link);
+    if (h.source === 'submitted') {
+      f.appendChild(el('span', null, 'Submitted by ' + (h.by || 'a fan')));
+    } else {
+      f.appendChild(el('span', null, 'Tweeted ' + t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })));
+      var link = el('a', null, 'View original on Twitter ↗');
+      link.href = 'https://x.com/brewer_haikuer/status/' + h.id; link.rel = 'noopener'; link.target = '_blank';
+      f.appendChild(link);
+    }
     var tags = (h.tags || []).filter(function (x) { return x[0] === '#'; }).slice(0, 4);
     if (tags.length) f.appendChild(el('span', 'tags', tags.join(' ')));
     a.appendChild(f);
@@ -377,8 +399,11 @@
   }
 
   /* ---------- boot ---------- */
+  var submitted = fetch('/api/approved').then(function (r) { return r.ok ? r.json() : { items: [] }; }).catch(function () { return { items: [] }; });
   fetch('data/haiku.json').then(function (r) { return r.json(); }).then(function (d) {
-    DB = d; index(); stats(); buildSelectors(); buildSeasons(); buildOnThisDay();
+    return submitted.then(function (s) { DB = d; mergeSubmitted(s.items || []); });
+  }).then(function () {
+    index(); stats(); buildSelectors(); buildSeasons(); buildOnThisDay();
     $('random').addEventListener('click', randomHaiku);
     $('prevDay').addEventListener('click', function () { stepDay(-1); });
     $('nextDay').addEventListener('click', function () { stepDay(1); });

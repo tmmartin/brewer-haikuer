@@ -196,3 +196,33 @@ a.brand{color:inherit;text-decoration:none}
 .pick-btns .btn-random{font-size:19px;letter-spacing:.06em;padding:13px 10px}
 .pick-btns .btn:disabled{opacity:.4;cursor:default}
 @media (max-width:520px){.pick-btns .btn-random{font-size:17px}.pick-btns .btn-ghost{font-size:24px}}
+
+/* submit form */
+.sub-form{display:grid;gap:16px;margin-top:8px}
+.sub-form label{display:grid;gap:6px;font:600 15px var(--label);letter-spacing:.06em;text-transform:uppercase;color:var(--ui)}
+.sub-form .opt{font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)}
+.sub-form input,.sub-form textarea{font:400 19px var(--display);padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);width:100%}
+.sub-form input[type=date]{font:400 17px var(--body);max-width:240px}
+.sub-form textarea{font:400 16px var(--body);resize:vertical}
+.sub-form input:focus,.sub-form textarea:focus{outline:3px solid var(--gold);outline-offset:0}
+.sub-form .hint{font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}
+.sub-form .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.sub-form .fine-print{font-size:14px;color:var(--muted);margin:0}
+.sub-form .btn-random{justify-self:start;padding:13px 28px;font-size:18px}
+.sub-form .btn:disabled{opacity:.5;cursor:default}
+#msg{margin:0;font-size:16px}#msg.bad{color:#a42a2a}#msg.good{color:#1c6b3a}
+
+/* admin review queue */
+.adm{padding-top:32px;padding-bottom:48px;max-width:760px}
+.adm h2{font:600 clamp(26px,4vw,34px)/1.1 var(--display);margin:0 0 16px}
+.adm .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.adm .tab{border:1px solid var(--ui);background:transparent;color:var(--ui);border-radius:999px;padding:6px 14px;font:600 14px var(--label);letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.adm .tab.on{background:var(--navy);color:var(--gold)}
+.sub{background:var(--card);border:3px solid var(--gold);border-radius:10px;padding:16px 18px;margin-bottom:16px;display:grid;gap:8px;box-shadow:var(--shadow)}
+.sub input,.sub select{font:400 18px var(--display);padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
+.sub select{font:500 15px var(--body)}
+.sub .row{display:grid;grid-template-columns:1fr 170px;gap:8px}
+.sub .row input{font:400 15px var(--body)}
+.sub .note{margin:0;font-style:italic}.sub .meta{margin:0;font-size:13px;color:var(--muted)}
+.sub .act{display:flex;gap:10px;flex-wrap:wrap}
+@media (max-width:520px){.sub .row{grid-template-columns:1fr}}

@@ -1,0 +1,13 @@
+# not published as static files
+.git
+.gitignore
+.assetsignore
+.dev.vars
+.wrangler
+node_modules
+worker
+schema.sql
+wrangler.jsonc
+package.json
+package-lock.json
+README.md

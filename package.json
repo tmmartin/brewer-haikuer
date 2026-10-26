@@ -1,0 +1,11 @@
+{
+  "name": "brewer-haikuer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "db:local": "wrangler d1 execute brewer-haikuer --local --file=schema.sql",
+    "db:remote": "wrangler d1 execute brewer-haikuer --remote --file=schema.sql"
+  },
+  "devDependencies": { "wrangler": "^4" }
+}

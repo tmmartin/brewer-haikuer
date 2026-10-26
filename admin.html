@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review queue — The Milwaukee Brewer Haikuer</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12284B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2312284B'/%3E%3Cpath d='M18 24h28M20 32h24M22 40h20' stroke='%23FFC52F' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a class="brand" href="./" aria-label="Brewer Haikuer home">
+      <div>
+        <h1>The Milwaukee Brewer Haikuer</h1>
+        <p class="tagline">Milwaukee Brewers / in 17 syllables / it’s a long season…</p>
+      </div>
+    </a>
+    <nav class="site-nav" aria-label="Site"><a href="./">Archive</a><a href="admin" aria-current="page">Review</a></nav>
+  </div>
+</header>
+
+<main class="wrap adm" id="main">
+  <h2>Review queue</h2>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="list"></div>
+</main>
+<script>
+(function () {
+  var tab = 'pending', list = document.getElementById('list'), st = document.getElementById('status'), tabs = document.getElementById('tabs');
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function api(path, opts) {
+    return fetch(path, opts).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); });
+  }
+  function post(id, body) {
+    return api('/api/admin/submissions/' + id, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  }
+  function load() {
+    st.textContent = 'Loading…';
+    api('/api/admin/submissions?status=' + tab).then(function (d) {
+      st.textContent = '';
+      tabs.textContent = '';
+      ['pending', 'approved', 'rejected'].forEach(function (s) {
+        var b = el('button', 'tab' + (s === tab ? ' on' : ''), s[0].toUpperCase() + s.slice(1) + ' (' + (d.counts[s] || 0) + ')');
+        b.type = 'button'; b.onclick = function () { tab = s; load(); }; tabs.appendChild(b);
+      });
+      list.textContent = '';
+      if (!d.items.length) list.appendChild(el('p', 'empty', tab === 'pending' ? 'Nothing waiting. 🎉' : 'Nothing here.'));
+      d.items.forEach(function (it) { list.appendChild(card(it)); });
+    }).catch(function (e) { st.textContent = 'Error: ' + e.message; });
+  }
+  function gameLabel(g) { return 'vs ' + g.opp + ' · ' + (g.rs > g.ra ? 'W ' : 'L ') + g.rs + '–' + g.ra + (g.post ? ' · postseason' : (g.n ? ' · game ' + g.n : '')); }
+  function card(it) {
+    var c = el('article', 'sub');
+    var ins = [];
+    for (var i = 0; i < 3; i++) { var inp = el('input'); inp.value = it.lines[i]; inp.maxLength = 100; inp.setAttribute('aria-label', 'Line ' + (i + 1)); ins.push(inp); c.appendChild(inp); }
+    var row = el('div', 'row');
+    var name = el('input'); name.value = it.name || ''; name.placeholder = 'Name (blank = anonymous)'; name.maxLength = 50; name.setAttribute('aria-label', 'Name');
+    var date = el('input'); date.type = 'date'; date.value = it.date; date.setAttribute('aria-label', 'Game date');
+    row.appendChild(name); row.appendChild(date); c.appendChild(row);
+    var sel = el('select'); sel.setAttribute('aria-label', 'Game'); c.appendChild(sel);
+    var games = [];
+    function fillGames(keep) {
+      sel.textContent = ''; games = [];
+      api('/api/admin/games?date=' + encodeURIComponent(date.value)).then(function (d) {
+        games = d.games || [];
+        games.forEach(function (g, i) { var o = el('option', null, gameLabel(g)); o.value = i; sel.appendChild(o); });
+        var off = el('option', null, games.length ? 'Off the field (no game)' : (d.error ? 'MLB lookup failed: off the field' : 'No Brewers game found: off the field')); off.value = 'off'; sel.appendChild(off);
+        if (keep && keep.pk) { var k = games.findIndex(function (g) { return g.pk === keep.pk; }); if (k >= 0) sel.value = k; }
+        if (keep === 'off') sel.value = 'off';
+      }).catch(function () { var o = el('option', null, 'Lookup failed: off the field'); o.value = 'off'; sel.appendChild(o); });
+    }
+    fillGames(it.status === 'approved' ? (it.game || 'off') : null);
+    date.onchange = function () { fillGames(null); };
+    if (it.note) c.appendChild(el('p', 'note', 'Note: ' + it.note));
+    c.appendChild(el('p', 'meta', 'Submitted ' + new Date(it.created_at).toLocaleString() + (it.reviewed_at ? ' · reviewed ' + new Date(it.reviewed_at).toLocaleString() + ' by ' + (it.reviewed_by || '') : '')));
+    var act = el('div', 'act');
+    function btn(label, cls, fn) { var b = el('button', 'btn ' + cls, label); b.type = 'button'; b.onclick = function () { b.disabled = true; fn().then(load).catch(function (e) { st.textContent = 'Error: ' + e.message; b.disabled = false; }); }; act.appendChild(b); }
+    if (it.status !== 'approved') btn('Approve', 'btn-random', function () {
+      var g = sel.value === 'off' ? null : games[+sel.value];
+      var game = g ? { pk: g.pk, opp: g.opp, rs: g.rs, ra: g.ra, n: g.n, post: g.post, year: g.year } : null;
+      return post(it.id, { action: 'approve', lines: ins.map(function (i) { return i.value; }), name: name.value, date: date.value, game: game });
+    });
+    if (it.status !== 'rejected') btn(it.status === 'approved' ? 'Unpublish' : 'Reject', 'btn-ghost', function () { return post(it.id, { action: 'reject' }); });
+    if (it.status === 'rejected') btn('Back to pending', 'btn-ghost', function () { return post(it.id, { action: 'pending' }); });
+    c.appendChild(act);
+    return c;
+  }
+  load();
+})();
+</script>
+<footer class="foot">
+  <div class="wrap">
+    <p>An archive of <a href="https://x.com/brewer_haikuer" rel="noopener">@brewer_haikuer</a> game-recap haiku, 2009–2024. Dates and game details are matched to the MLB schedule; game summaries are assembled live from the MLB Stats API.</p>
+    <p class="fine">Unofficial fan project — not affiliated with or endorsed by MLB or the Milwaukee Brewers. Game data © MLB Advanced Media, L.P.</p>
+  </div>
+</footer>
+</body>
+</html>

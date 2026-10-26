@@ -1,0 +1,21 @@
+{
+  // Cloudflare Worker: serves the static site (assets) and the /api + /admin routes.
+  "name": "brewer-haikuer",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    // only these paths run the Worker first; everything else is served as a static file
+    "run_worker_first": ["/api/*", "/admin*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "brewer-haikuer", "database_id": "REPLACE_WITH_D1_DATABASE_ID" }
+  ],
+  // Non-secret settings. Secrets (TURNSTILE_SECRET, IP_SALT) are set in the dashboard.
+  "vars": {
+    "TURNSTILE_SITE_KEY": "",
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  }
+}

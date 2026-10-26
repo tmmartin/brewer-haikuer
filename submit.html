@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit a haiku — The Milwaukee Brewer Haikuer</title>
+<meta name="description" content="Write a haiku about a Milwaukee Brewers game and submit it to the archive.">
+<meta name="theme-color" content="#12284B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2312284B'/%3E%3Cpath d='M18 24h28M20 32h24M22 40h20' stroke='%23FFC52F' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a class="brand" href="./" aria-label="Brewer Haikuer home">
+      <div>
+        <h1>The Milwaukee Brewer Haikuer</h1>
+        <p class="tagline">Milwaukee Brewers / in 17 syllables / it’s a long season…</p>
+      </div>
+    </a>
+    <nav class="site-nav" aria-label="Site"><a href="./">Archive</a><a href="submit.html" aria-current="page">Submit</a><a href="about.html">About</a></nav>
+  </div>
+</header>
+
+<main class="wrap about" id="main">
+  <h2>Submit a haiku</h2>
+  <p>Wrote a haiku about a Brewers game? Send it in. Every submission is read before it goes in the archive, so it won’t appear right away. Three lines, any syllable count you like.</p>
+
+  <form id="f" class="sub-form" novalidate>
+    <label>Line 1<input name="l1" maxlength="100" autocomplete="off" required></label>
+    <label>Line 2<input name="l2" maxlength="100" autocomplete="off" required></label>
+    <label>Line 3<input name="l3" maxlength="100" autocomplete="off" required></label>
+    <label>Game date<input name="date" type="date" min="2009-03-30" required>
+      <span class="hint">The day of the game the haiku is about.</span></label>
+    <label><span>Your name or handle <span class="opt">(optional)</span></span><input name="name" maxlength="50" autocomplete="nickname">
+      <span class="hint">Shown with your haiku. Leave blank to stay anonymous.</span></label>
+    <label><span>Note to the editor <span class="opt">(optional, not published)</span></span><textarea name="note" rows="2" maxlength="500"></textarea></label>
+    <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div id="ts"></div>
+    <p class="fine-print">By submitting, you agree that your haiku and the name you entered may be published on this site. Nothing else you enter is published, and no email address is collected.</p>
+    <button class="btn btn-random" id="go" type="submit">Submit haiku</button>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </form>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>An archive of <a href="https://x.com/brewer_haikuer" rel="noopener">@brewer_haikuer</a> game-recap haiku, 2009–2024. Dates and game details are matched to the MLB schedule; game summaries are assembled live from the MLB Stats API.</p>
+    <p class="fine">Unofficial fan project — not affiliated with or endorsed by MLB or the Milwaukee Brewers. Game data © MLB Advanced Media, L.P.</p>
+  </div>
+</footer>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script>
+(function () {
+  var f = document.getElementById('f'), msg = document.getElementById('msg'), go = document.getElementById('go'), wid = null, token = '';
+  var today = new Date(); f.date.max = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  function say(t, bad) { msg.textContent = t; msg.className = bad ? 'bad' : 'good'; }
+  fetch('/api/config').then(function (r) { return r.json(); }).then(function (c) {
+    if (!c.turnstileSiteKey) { say('Submissions are not open yet. Please check back soon.', true); go.disabled = true; return; }
+    (function wait() {
+      if (!window.turnstile) return setTimeout(wait, 150);
+      wid = turnstile.render('#ts', { sitekey: c.turnstileSiteKey, callback: function (t) { token = t; } , 'expired-callback': function () { token = ''; } });
+    })();
+  }).catch(function () { say('Submissions are unavailable right now.', true); go.disabled = true; });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = function (n) { return f[n].value; };
+    if (!v('l1').trim() || !v('l2').trim() || !v('l3').trim()) return say('Please fill in all three lines.', true);
+    if (!v('date')) return say('Please choose the game date.', true);
+    if (!token) return say('Please complete the spam check.', true);
+    go.disabled = true; say('Sending…');
+    fetch('/api/submit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({
+      lines: [v('l1'), v('l2'), v('l3')], date: v('date'), name: v('name'), note: v('note'), website: v('website'), token: token }) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (r) {
+        if (r.ok) { f.reset(); say('Thank you! Your haiku is in the review queue. If it’s approved, it will appear in the archive on its game date.'); }
+        else { say(r.j.error || 'Something went wrong.', true); go.disabled = false; }
+        if (window.turnstile && wid !== null) { turnstile.reset(wid); token = ''; }
+        if (r.ok) setTimeout(function () { go.disabled = false; }, 4000);
+      }).catch(function () { say('Network problem. Please try again.', true); go.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>
